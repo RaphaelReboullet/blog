@@ -72,6 +72,8 @@ class BlogController extends AbstractController
             ->getRepository(Article::class)
             ->findOneBy(['title' => mb_strtolower($slug)]);
 
+        $category = $article->getCategory();
+
         if (!$article) {
             throw $this->createNotFoundException(
                 'No article with '.$slug.' title, found in article\'s table.'
@@ -83,9 +85,11 @@ class BlogController extends AbstractController
             [
                 'article' => $article,
                 'slug' => $slug,
+                'category' => $category
             ]
         );
     }
+
     /**
      * @Route("/category/{categoryName}", name="blog_show_category")
      * @return Response A response instance
@@ -99,13 +103,8 @@ class BlogController extends AbstractController
             ->getRepository(Category::class)
             ->findOneByName($categoryName);
 
-        $articles=$this->getDoctrine()
-            ->getRepository(Article::class)
-            ->findBy(
-                array('category' => $category),
-                array ('id' => 'desc'),
-                3
-            );
+        $articles=$category->getArticles();
+            ;
 
 
         return $this->render(
@@ -116,4 +115,6 @@ class BlogController extends AbstractController
             ]
         );
     }
+
+
 }
