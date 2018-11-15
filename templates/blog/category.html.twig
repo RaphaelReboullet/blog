@@ -6,7 +6,7 @@
     <div>
         <h1>{{ category.name }}</h1>
         {% for article in articles %}
-            <h2>{{ article.id }} : {{ article.title }}</h2> <p>{{ article.content }}</p>
+            <h2>{{ article.id }} : <a href="/article/{{ article.title }}">{{ article.title }}</a></h2> <p>{{ article.content }}</p>
         {% endfor %}
     </div>
 

@@ -16,7 +16,25 @@ use App\Entity\Tag;
 class TagController extends  AbstractController{
 
     /**
-     * @Route("/tag/{name}", name="tag_index")
+     * @Route("/tags", name="tags_index")
+     * @return Response A response instance
+     */
+
+    public function showTags(){
+        $tags = $this->getDoctrine()
+            ->getRepository(Tag::class)
+            ->findAll();
+
+        return $this->render(
+            'blog/indextag.html.twig',
+            [
+                'tags' => $tags,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/tags/{name}", name="articles_by_tags")
      * @return Response A response instance
      */
 

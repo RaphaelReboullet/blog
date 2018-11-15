@@ -51,7 +51,7 @@ class BlogController extends AbstractController
      *
      * @param string $slug The slugger
      *
-     * @Route("/{slug}",
+     * @Route("/article/{slug}",
      *     defaults={"slug" = null},
      *     name="blog_show")
      *  @return Response A response instance
@@ -95,7 +95,26 @@ class BlogController extends AbstractController
     }
 
     /**
-     * @Route("/category/{categoryName}", name="blog_show_category")
+     * @Route("/categories", name="categories_index")
+     * @return Response A response instance
+     */
+
+    public function showCategories() :Response
+    {
+        $categories = $this->getDoctrine()
+            ->getRepository(Category::class)
+            ->findAll();
+
+        return $this->render(
+            'blog/indexcategories.html.twig',
+            [
+                'categories' => $categories,
+            ]
+        );
+    }
+
+    /**
+     * @Route("/categories/{categoryName}", name="blog_show_category")
      * @return Response A response instance
      */
 
