@@ -51,7 +51,7 @@ class BlogController extends AbstractController
      *
      * @param string $slug The slugger
      *
-     * @Route("/{slug<^[a-z0-9-]+$>}",
+     * @Route("/{slug}",
      *     defaults={"slug" = null},
      *     name="blog_show")
      *  @return Response A response instance
@@ -73,6 +73,9 @@ class BlogController extends AbstractController
             ->findOneBy(['title' => mb_strtolower($slug)]);
 
         $category = $article->getCategory();
+        $tags = $article->getTags();
+
+
 
         if (!$article) {
             throw $this->createNotFoundException(
@@ -85,7 +88,8 @@ class BlogController extends AbstractController
             [
                 'article' => $article,
                 'slug' => $slug,
-                'category' => $category
+                'category' => $category,
+                'tags' => $tags
             ]
         );
     }

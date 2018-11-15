@@ -11,6 +11,15 @@
         <h1>Real article s title : {{ article.title }}</h1>
         <h2>Category : {{ category.name }}</h2>
         <p>{{ article.content }}</p>
+        <strong>Tags :</strong>
+        <ul>
+            {% for tag in tags %}
+                <li><a href="/tag/{{tag.name}}">{{ tag.name }}</a> </li>
+            {% else %}
+                <li>No tags for this article</li>
+            {% endfor %}
+        </ul>
+
     </div>
 
     <a href="{{ path('homepage') }}">
