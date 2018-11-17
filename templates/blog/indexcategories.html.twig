@@ -3,4 +3,10 @@
     {% for category in categories %}
         <li><a href="/categories/{{ category.name }}">{{ category.name }}</a></li>
     {% endfor %}
+
+    <h1>New category :</h1>
+    {{ form_start(categoryform) }}
+    {{ form_row(categoryform.name) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_end(categoryform) }}
 {% endblock %}

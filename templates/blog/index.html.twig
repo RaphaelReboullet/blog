@@ -17,12 +17,17 @@
     <h1>All articles from article s table : </h1>
     <li><a href="{{ path('categories_index') }}"><h1>All Categories</h1></a></li>
     <li><a href="{{ path('tags_index') }}"><h1>All Tags</h1></a></li>
+
+
     {% for article in articles %}
         <div>
             <h2>{{ loop.index }} / {{ article.title }} - Category : {{ article.category.name }}</h2>
             <p>{{ article.content }}</p>
         </div>
     {% endfor %}
+
+
+
     <a href="{{ path('homepage') }}">
         Back to homepage.
     </a>
