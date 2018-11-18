@@ -9,13 +9,13 @@
 // src/Controller/BlogController.php
 namespace App\Controller;
 
+use App\Form\ArticleType;
 use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Article;
 use App\Entity\Category;
-use App\Form\ArticleSearchType;
 use Symfony\Component\HttpFoundation\Request;
 
 
@@ -28,7 +28,7 @@ class BlogController extends AbstractController
      * @Route("/", name="blog_index")
      * @return Response A response instance
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         $articles = $this->getDoctrine()
             ->getRepository(Article::class)
@@ -40,9 +40,32 @@ class BlogController extends AbstractController
             );
         }
 
+        $article = new Article();
+        $articleForm = $this->createForm(
+            ArticleType::class,
+            $article);
+        $articleForm->handleRequest($request);
+
+        if ($articleForm->isSubmitted()) {
+            $title = $article->getTitle();
+            $content = $article->getContent();
+            $category = $article->getCategory();
+            $article->setTitle($title);
+            $article->setContent($content);
+            $article->setCategory($category);
+
+
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($article);
+            $em->flush();
+        }
+        header('location : /tags');
+
         return $this->render(
             'blog/index.html.twig', [
                 'articles' => $articles,
+                'articleform' => $articleForm->createView()
             ]
         );
     }

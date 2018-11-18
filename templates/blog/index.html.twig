@@ -26,6 +26,12 @@
         </div>
     {% endfor %}
 
+    {{ form_start(articleform) }}
+    {{ form_row(articleform.title) }}
+    {{ form_row(articleform.content) }}
+    {{ form_row(articleform.category) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_end(articleform) }}
 
 
     <a href="{{ path('homepage') }}">
