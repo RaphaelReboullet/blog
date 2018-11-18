@@ -59,8 +59,10 @@ class BlogController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($article);
             $em->flush();
+
+            return $this->redirectToRoute('blog_index');
         }
-        header('location : /tags');
+
 
         return $this->render(
             'blog/index.html.twig', [
@@ -143,6 +145,8 @@ class BlogController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($category);
             $em->flush();
+
+            return $this->redirectToRoute('categories_index');
         }
 
 
