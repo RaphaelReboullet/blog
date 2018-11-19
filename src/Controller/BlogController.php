@@ -73,17 +73,18 @@ class BlogController extends AbstractController
     }
 
 
-    /**
-     * Getting a article with a formatted slug for title
-     *
-     * @param string $slug The slugger
-     *
-     * @Route("/article/{slug}",
-     *     defaults={"slug" = null},
-     *     name="blog_show")
-     * @return Response A response instance
-     */
-    public function show($slug): Response
+        /**
+         * Getting a article with a formatted slug for title
+         *
+         * @param string $slug The slugger
+         *
+         * @Route("/article/{slug}",
+         *     defaults={"slug" = null},
+         *     name="blog_show")
+         * @return Response A response instance
+         */
+
+   public function show($slug): Response
     {
         if (!$slug) {
             throw $this
@@ -119,6 +120,7 @@ class BlogController extends AbstractController
             ]
         );
     }
+
 
     /**
      * @Route("/categories", name="categories_index")
@@ -158,6 +160,7 @@ class BlogController extends AbstractController
                 ]
             );
     }
+
 
     /**
      * @Route("/categories/{categoryName}", name="blog_show_category")
