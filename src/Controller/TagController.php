@@ -1,63 +1,90 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: raphael
- * Date: 15/11/18
- * Time: 10:16
- */
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Tag;
+use App\Form\TagType;
+use App\Repository\TagRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
-class TagController extends  AbstractController{
-
+/**
+ * @Route("/tag")
+ */
+class TagController extends AbstractController
+{
     /**
-     * @Route("/tags", name="tags_index")
-     * @return Response A response instance
+     * @Route("/", name="tag_index", methods="GET")
      */
-
-    public function showTags(){
-        $tags = $this->getDoctrine()
-            ->getRepository(Tag::class)
-            ->findAll();
-
-        return $this->render(
-            'blog/indextag.html.twig',
-            [
-                'tags' => $tags,
-            ]
-        );
+    public function index(TagRepository $tagRepository): Response
+    {
+        return $this->render('tag/index.html.twig', ['tags' => $tagRepository->findAll()]);
     }
 
     /**
-     * @Route("/tags/{name}", name="articles_by_tags")
-     * @return Response A response instance
+     * @Route("/new", name="tag_new", methods="GET|POST")
      */
+    public function new(Request $request): Response
+    {
+        $tag = new Tag();
+        $form = $this->createForm(TagType::class, $tag);
+        $form->handleRequest($request);
 
-    public function showArticlesByTag($name){
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($tag);
+            $em->flush();
 
-        $tag = $this->getDoctrine()
-            ->getRepository(Tag::class)
-            ->findOneByName($name);
+            return $this->redirectToRoute('tag_index');
+        }
 
+        return $this->render('tag/new.html.twig', [
+            'tag' => $tag,
+            'form' => $form->createView(),
+        ]);
+    }
 
+    /**
+     * @Route("/{id}", name="tag_show", methods="GET")
+     */
+    public function show(Tag $tag): Response
+    {
+        return $this->render('tag/show.html.twig', ['tag' => $tag]);
+    }
 
-        $articles = $tag->getArticles();
+    /**
+     * @Route("/{id}/edit", name="tag_edit", methods="GET|POST")
+     */
+    public function edit(Request $request, Tag $tag): Response
+    {
+        $form = $this->createForm(TagType::class, $tag);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
 
+            return $this->redirectToRoute('tag_index', ['id' => $tag->getId()]);
+        }
 
+        return $this->render('tag/edit.html.twig', [
+            'tag' => $tag,
+            'form' => $form->createView(),
+        ]);
+    }
 
+    /**
+     * @Route("/{id}", name="tag_delete", methods="DELETE")
+     */
+    public function delete(Request $request, Tag $tag): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$tag->getId(), $request->request->get('_token'))) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($tag);
+            $em->flush();
+        }
 
-        return $this->render(
-            'blog/tag.html.twig',
-            [
-                'tag' => $tag,
-                'articles' => $articles
-            ]
-        );
+        return $this->redirectToRoute('tag_index');
     }
 }

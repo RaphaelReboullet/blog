@@ -9,6 +9,7 @@
 // src/Controller/BlogController.php
 namespace App\Controller;
 
+use App\Form\ArticleSearchType;
 use App\Form\ArticleType;
 use App\Form\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Repository\ArticleRepository;
 use Symfony\Component\HttpFoundation\Request;
+
 
 
 class BlogController extends AbstractController
@@ -38,6 +41,19 @@ class BlogController extends AbstractController
             throw $this->createNotFoundException(
                 'No article found in article\'s table.'
             );
+        }
+
+        $form = $this->createForm(
+            ArticleSearchType::class,
+            null,
+            ['method' => Request::METHOD_GET]
+        );
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()) {
+            $data = $form->getData();
+            $articles = $this->getDoctrine()->getRepository(Article::class)
+                ->findLike($data['searchField']);
         }
 
         $article = new Article();
@@ -67,7 +83,8 @@ class BlogController extends AbstractController
         return $this->render(
             'blog/index.html.twig', [
                 'articles' => $articles,
-                'articleform' => $articleForm->createView()
+                'articleform' => $articleForm->createView(),
+                'form' => $form->createView()
             ]
         );
     }
@@ -78,7 +95,7 @@ class BlogController extends AbstractController
          *
          * @param string $slug The slugger
          *
-         * @Route("/article/{slug}",
+         * @Route("/articles/{slug}",
          *     defaults={"slug" = null},
          *     name="blog_show")
          * @return Response A response instance
